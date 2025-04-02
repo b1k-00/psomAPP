@@ -2,40 +2,37 @@ import requests
 from bs4 import BeautifulSoup
 
 def psom_StatScraper(url, player_name):
-
     response = requests.get(url)
-    if response.status_code == 200:
-        print(f"Failed to retireve page: {response.status_code}")
+
+    if response.status_code != 200:
+        print(f"Failed to retrieve page: {response.status_code}")
         return None
-    
-    #Parsing MYIBL HTML
+
+    # Parse HTML
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    #Find stats div element
-    stats_div = soup.find('div', class_='player_stats')
-    if not stats_div:
-        print("Failed to find stats")
-        return None
-    
-    # Find the score elements
-    score_div = stats_div.find('div', class_='player-statistic-score')
+    # Locate the statistics section
+    score_div = soup.find('div', class_='player-statistic-score')
     if not score_div:
         print("Could not find score div")
         return None
     
-    # Extract the statistics values
+    # Extract statistics values
     stat_values = []
     for h3 in score_div.find_all('h3'):
-        # Extract the number from the text
-        value = int(h3.text.strip())
-        stat_values.append(value)
+        try:
+            value = int(h3.text.strip())
+            stat_values.append(value)
+        except ValueError:
+            print(f"Invalid number found: {h3.text.strip()}")
+            return None
     
-    # Ensure we found all 5 statistics
+    # Ensure exactly 5 statistics are found
     if len(stat_values) != 5:
         print(f"Expected 5 statistics, but found {len(stat_values)}")
         return None
-    
-    # Return a dictionary with the player's statistics
+
+    # Return formatted statistics
     return {
         'player_name': player_name,
         'points': stat_values[0],

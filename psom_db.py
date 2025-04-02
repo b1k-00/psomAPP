@@ -7,7 +7,6 @@ def initalize_db():
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS player_stats (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        player_name TEXT NOT NULL,
         points INTEGER,
         assists INTEGER,
         blocks INTEGER,
@@ -22,10 +21,9 @@ def initalize_db():
 
 def sv_2_db(conn, cursor, player_stats):
     cursor.execute('''
-    'INSERT INTO player_stats (player_name, points, assists, blocks, rebounds, steals)'
-    VALUES (?, ?, ?, ?, ?, ?)'
+    INSERT INTO player_stats (points, assists, blocks, rebounds, steals)
+    VALUES (?, ?, ?, ?, ?)
     ''', (
-        player_stats['player_name'],
         player_stats['points'],
         player_stats['assists'],
         player_stats['blocks'],
@@ -34,4 +32,4 @@ def sv_2_db(conn, cursor, player_stats):
     ))
 
     conn.commit()
-    print(f"PSOM stats are updated for {player_stats['player_name']}")
+    print(f"PSOM stats are updated!")
