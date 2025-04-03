@@ -33,3 +33,8 @@ def sv_2_db(conn, cursor, player_stats):
 
     conn.commit()
     print(f"PSOM stats are updated!")
+
+def get_stats(cursor):
+        cursor.execute('SELECT * FROM player_stats')
+        return cursor.fetchall()
+
